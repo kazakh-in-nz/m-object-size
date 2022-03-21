@@ -4,7 +4,7 @@ import (
 	"flag"
 	"time"
 
-	pbobjectsize "github.com/kazakh-in-nz/m-object-size/v1"
+	pbgameengine "github.com/kazakh-in-nz/m-game-engine/v1"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 
@@ -29,7 +29,7 @@ func main() {
 		log.Fatal().Err(err).Str("address", *addressPtr).Msg("failed to dial m-object-size gRPC service")
 	}
 
-	c := pbobjectsize.NewGameClient(conn)
+	c := pbgameengine.NewGameEngineClient(conn)
 
 	if c == nil {
 		log.Info().Msg("Client nil")
@@ -38,14 +38,14 @@ func main() {
 	timeoutCtx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	r, err := c.GetSize(timeoutCtx, &pbobjectsize.GetSizeRequest{})
+	r, err := c.GetSize(timeoutCtx, &pbgameengine.GetSizeRequest{})
 
 	if err != nil {
 		log.Fatal().Err(err).Str("address", *addressPtr).Msg("failed to get a response")
 	}
 
 	if r != nil {
-		log.Info().Interface("object size", r.GetHighScore()).Msg("Highscore from m-object-size microservice")
+		log.Info().Interface("object size", r.GetSize()).Msg("Highscore from m-object-size microservice")
 	} else {
 		log.Error().Msg("Couldn't get object size")
 	}
